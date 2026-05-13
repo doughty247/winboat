@@ -8,25 +8,25 @@ echo ""
 
 # Check if wrapper exists
 if [ ! -f ~/.local/bin/winboat-launcher ]; then
-    echo "❌ ERROR: Wrapper not found at ~/.local/bin/winboat-launcher"
+    echo "ERROR: Wrapper not found at ~/.local/bin/winboat-launcher"
     echo "   Launch WinBoat once to install it"
     exit 1
 fi
 
-echo "✅ Wrapper found at ~/.local/bin/winboat-launcher"
+echo "OK: Wrapper found at ~/.local/bin/winboat-launcher"
 
 # Check if binary path is cached
 if [ ! -f ~/.winboat/binary_path ]; then
-    echo "❌ ERROR: Binary path not cached at ~/.winboat/binary_path"
+    echo "ERROR: Binary path not cached at ~/.winboat/binary_path"
     echo "   Launch WinBoat once to create cache"
     exit 1
 fi
 
 WINBOAT_BIN=$(cat ~/.winboat/binary_path)
-echo "✅ Binary path cached: $WINBOAT_BIN"
+echo "OK: Binary path cached: $WINBOAT_BIN"
 
 if [ ! -f "$WINBOAT_BIN" ]; then
-    echo "⚠️  WARNING: Cached binary does not exist: $WINBOAT_BIN"
+    echo "WARNING: Cached binary does not exist: $WINBOAT_BIN"
     echo "   You may need to update the cache"
 fi
 
@@ -52,14 +52,14 @@ echo "Did Notepad launch? (y/n)"
 read -r response
 
 if [[ "$response" =~ ^[Yy]$ ]]; then
-    echo "✅ SUCCESS! Launcher is working correctly."
+    echo "SUCCESS: Launcher is working correctly."
     echo ""
     echo "Next steps:"
     echo "  1. Test multiple rapid launches (click 3-4 shortcuts quickly)"
     echo "  2. Test 'Open with WinBoat' from file manager"
     echo "  3. Check task manager shows separate icons per app"
 else
-    echo "❌ FAILED. Check logs for errors:"
+    echo "FAILED: Check logs for errors:"
     echo "   tail -50 ~/.winboat/winboat.log"
     echo ""
     echo "Common issues:"

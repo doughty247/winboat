@@ -42,7 +42,7 @@ enum CustomAppCommands {
 
 const presetApps: WinApp[] = [
     {
-        Name: "⚙️ Windows Desktop",
+        Name: "Windows Desktop",
         Icon: AppIcons[InternalApps.WINDOWS_DESKTOP],
         Source: "internal",
         Path: InternalApps.WINDOWS_DESKTOP,
@@ -50,7 +50,7 @@ const presetApps: WinApp[] = [
         Usage: 0,
     },
     {
-        Name: "⚙️ Windows Explorer",
+        Name: "Windows Explorer",
         Icon: AppIcons[InternalApps.WINDOWS_EXPLORER],
         Source: "internal",
         Path: "%windir%\\explorer.exe",
@@ -58,7 +58,7 @@ const presetApps: WinApp[] = [
         Usage: 0,
     },
     {
-        Name: "🖥️ Browser Display",
+        Name: "Browser Display",
         Icon: AppIcons[InternalApps.NOVNC_BROWSER],
         Source: "internal",
         Path: CustomAppCommands.NOVNC_COMMAND,

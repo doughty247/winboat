@@ -16,5 +16,5 @@ mkdir -p "$INSTALL_DIR"
 cp "$LAUNCHER_BIN" "$INSTALL_DIR/winboat-launcher"
 chmod +x "$INSTALL_DIR/winboat-launcher"
 
-echo "✅ Launcher built and installed to: $INSTALL_DIR/winboat-launcher"
+echo "Launcher built and installed to: $INSTALL_DIR/winboat-launcher"
 echo "Size: $(du -h "$INSTALL_DIR/winboat-launcher" | cut -f1)"

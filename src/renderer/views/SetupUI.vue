@@ -616,7 +616,7 @@
                             You can choose whether to enable this feature and select which folder to share.
                         </p>
                         <p class="text-lg text-gray-400">
-                            <b>⚠️ WARNING:</b>
+                            <b>WARNING:</b>
                             Sharing a folder exposes your Linux files to Windows-specific malware and viruses.
                             Only enable this feature if you understand the risks involved. Always be careful with the
                             files you download and open in Windows.

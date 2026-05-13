@@ -14,7 +14,7 @@ const execAsync = promisify(exec);
 /**
  * Simple manager for creating Linux desktop launchers for Windows apps
  * 
- * ⚠️ EXPERIMENTAL FEATURE
+ * EXPERIMENTAL FEATURE
  * This feature creates system-level desktop files and scripts.
  * Use at your own risk.
  */
@@ -426,7 +426,7 @@ interface LauncherEntry {
  * Manager for "Open with WinBoat" file association
  * Creates a .desktop file that allows right-clicking .exe files in file managers
  * 
- * ⚠️ EXPERIMENTAL FEATURE - Requires Shared Home Folder to be enabled
+ * EXPERIMENTAL FEATURE - Requires Shared Home Folder to be enabled
  */
 export class OpenWithManager {
     private winboat: Winboat;

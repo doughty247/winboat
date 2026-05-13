@@ -112,7 +112,7 @@ async function start() {
     Chokidar.watch(path, {
         cwd: path,
     }).on("change", path => {
-        console.log(Chalk.blueBright(`[electron] `) + `Change in ${path}. reloading... 🚀`);
+        console.log(Chalk.blueBright(`[electron] `) + `Change in ${path}. reloading...`);
 
         if (path.startsWith(Path.join("static", "/"))) {
             copy(path);

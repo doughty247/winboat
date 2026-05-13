@@ -406,7 +406,7 @@ async function resetCustomAppForm() {
 
 /**
  * Creates a desktop launcher for the app
- * ⚠️ EXPERIMENTAL FEATURE
+ * EXPERIMENTAL FEATURE
  */
 async function createDesktopLauncher(app: WinApp) {
     try {

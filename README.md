@@ -65,7 +65,7 @@ Before running WinBoat, ensure your system meets the following requirements:
 - **In case of Docker:**
   - **Docker**: Required for containerization
       - [Installation Guide](https://docs.docker.com/engine/install/)
-      - **⚠️ NOTE:** Docker Desktop is **not** supported, you will run into issues if you use it
+      - **NOTE:** Docker Desktop is **not** supported, you will run into issues if you use it
   - **Docker Compose v2**: Required for compatibility with docker-compose.yml files
       - [Installation Guide](https://docs.docker.com/compose/install/#plugin-linux-only)
   - **Docker User Group**: Add your user to the `docker` group

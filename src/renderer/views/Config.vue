@@ -509,7 +509,7 @@
             <x-label class="mb-4 text-neutral-300">Danger Zone</x-label>
             <x-card class="flex flex-col py-3 my-0 mb-6 w-full backdrop-blur-xl backdrop-brightness-150 bg-red-500/10">
                 <h1 class="my-0 text-lg font-normal text-red-300">
-                    ⚠️ <span class="font-bold">WARNING:</span> All actions here are potentially destructive, proceed at your own caution!
+                    <span class="font-bold">WARNING:</span> All actions here are potentially destructive, proceed with caution.
                 </h1>
             </x-card>
             <div>
@@ -840,7 +840,7 @@ async function toggleDesktopLauncher() {
         const launcherMgr = new DesktopLauncherManager(winboat);
         const count = await launcherMgr.removeAllLaunchers();
         if (count > 0) {
-            alert(`✅ Removed ${count} app shortcut(s)`);
+            alert(`Removed ${count} app shortcut(s)`);
         }
     }
     

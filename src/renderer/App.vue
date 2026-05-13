@@ -290,7 +290,7 @@ onMounted(async () => {
                                     // Remove home directory prefix and convert to UNC
                                     const relativePath = appPath.substring(homeDir.length).replace(/^\//, '');
                                     finalPath = `\\\\host.lan\\Data\\${relativePath.replace(/\//g, '\\')}`;
-                                    console.log('[WinBoat] Converted Linux path to UNC:', appPath, '→', finalPath);
+                                    console.log('[WinBoat] Converted Linux path to UNC:', appPath, '->', finalPath);
                                 } else {
                                     logger.error('[WinBoat] File not in home directory:', appPath);
                                     notification.close();
@@ -317,9 +317,9 @@ onMounted(async () => {
                 
                 if (app) {
                     console.log('[WinBoat] ===== FINAL MATCH =====');
-                    logger.info('[WinBoat] ✅ Found/created app:', app.Name, 'with path', app.Path);
-                    console.log('[WinBoat] ✅ Final matched app:', app.Name);
-                    console.log('[WinBoat] ✅ App path:', app.Path);
+                    logger.info('[WinBoat] Found/created app:', app.Name, 'with path', app.Path);
+                    console.log('[WinBoat] Final matched app:', app.Name);
+                    console.log('[WinBoat] App path:', app.Path);
                     console.log('[WinBoat] ===========================');
                     
                     notification.close();
@@ -338,8 +338,8 @@ onMounted(async () => {
                         window.close();
                     }, 2000);
                 } else {
-                    logger.error('[WinBoat] ❌ App not found with path:', appPath);
-                    console.error('[WinBoat] ❌ App not found with path:', appPath);
+                    logger.error('[WinBoat] App not found with path:', appPath);
+                    console.error('[WinBoat] App not found with path:', appPath);
                     console.log('[WinBoat] Available paths:', apps.map((a: any) => `${a.Name}: ${a.Path}`).join(', '));
                     notification.close();
                     new Notification('WinBoat Error', {
@@ -380,21 +380,21 @@ onMounted(async () => {
         // Auto-sync desktop launchers on app startup when container comes online
         // Only runs if "Automatic" setting is enabled
         watch(() => winboat?.isOnline.value, async (isOnline) => {
-            console.log('🔥 LAUNCHER WATCH TRIGGERED - isOnline:', isOnline);
+            console.log('[Launcher] Watch triggered - isOnline:', isOnline);
             if (isOnline && wbConfig?.config.desktopLauncherAutoSync) {
                 try {
-                    console.log('🚀 [Launcher] Starting auto-sync on app startup...');
+                    console.log('[Launcher] Starting auto-sync on app startup...');
                     const launcherMgr = new DesktopLauncherManager(winboat!);
-                    console.log('📱 [Launcher] Created launcher manager');
+                    console.log('[Launcher] Created launcher manager');
                     const apps = await winboat!.appMgr!.getApps(`http://127.0.0.1:${winboat!.getHostPort(7148)}`);
-                    console.log('📋 [Launcher] Got apps:', apps?.length, 'apps found');
+                    console.log('[Launcher] Got apps:', apps?.length, 'apps found');
                     const result = await launcherMgr.syncAll(apps);
-                    console.log(`✅ [Launcher] Startup sync completed: +${result.created} / -${result.removed}`);
+                    console.log(`[Launcher] Startup sync completed: +${result.created} / -${result.removed}`);
                 } catch (e) {
-                    console.error('❌ [Launcher] Startup auto-sync failed:', e);
+                    console.error('[Launcher] Startup auto-sync failed:', e);
                 }
             } else if (isOnline) {
-                console.log('ℹ️ [Launcher] Auto-sync disabled (manual mode)');
+                console.log('[Launcher] Auto-sync disabled (manual mode)');
             }
         });
     }

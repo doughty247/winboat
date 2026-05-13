@@ -5,7 +5,7 @@
 
 set -e
 
-echo "🚀 Installing WinBoat System Integration..."
+echo "Installing WinBoat System Integration..."
 
 # Colors
 GREEN='\033[0;32m'
@@ -140,11 +140,11 @@ if [[ ":$PATH:" != *":$BIN_DIR:"* ]]; then
 fi
 
 echo ""
-echo -e "${GREEN}✅ WinBoat System Integration installed successfully!${NC}"
+echo -e "${GREEN}WinBoat System Integration installed successfully.${NC}"
 echo ""
 echo "You can now:"
-echo "  • Right-click .exe files → Open With → WinBoat"
-echo "  • Run: winboat-open /path/to/file.exe"
+echo "  - Right-click .exe files -> Open With -> WinBoat"
+echo "  - Run: winboat-open /path/to/file.exe"
 echo ""
 echo "To uninstall, run:"
 echo "  rm ~/.local/bin/winboat-open ~/.local/share/applications/winboat-open.desktop"
