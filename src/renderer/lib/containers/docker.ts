@@ -111,6 +111,17 @@ export class DockerContainer extends ContainerManager {
         }
     }
 
+    async removeVolume(volumeName: string): Promise<void> {
+        const args = ["volume", "rm", volumeName];
+
+        try {
+            await execFileAsync(this.executableAlias, args);
+        } catch (e) {
+            containerLogger.error(`Failed to remove volume '${volumeName}'`);
+            containerLogger.error(e);
+        }
+    }
+
     async getStatus(): Promise<ContainerStatus> {
         const statusMap = {
             created: ContainerStatus.CREATED,

@@ -6,6 +6,7 @@ import { Winboat } from "./winboat";
 import { ContainerManager } from "./containers/container";
 import { WinboatConfig } from "./config";
 import { CommonPorts, createContainer, getActiveHostPort } from "./containers/common";
+import { applyLookingGlassToCompose } from "./looking-glass";
 
 const fs: typeof import("fs") = require("fs");
 const path: typeof import("path") = require("path");
@@ -127,8 +128,13 @@ export class InstallManager {
             }
         }
 
+        const wbConfig = WinboatConfig.getInstance();
+        const finalCompose = wbConfig.config.lookingGlassEnabled
+            ? applyLookingGlassToCompose(composeContent)
+            : composeContent;
+
         // Write the compose file
-        this.container.writeCompose(composeContent);
+        this.container.writeCompose(finalCompose);
     }
 
     async createOEMAssets() {

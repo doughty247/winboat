@@ -20,19 +20,16 @@ import { assert } from "@vueuse/core";
 import { setIntervalImmediately } from "../utils/interval";
 import { ExecFileAsyncError } from "./exec-helper";
 import { ContainerManager, ContainerStatus } from "./containers/container";
-import { CommonPorts, ContainerRuntimes, createContainer, getActiveHostPort } from "./containers/common";
+import { CommonPorts, createContainer, getActiveHostPort } from "./containers/common";
 
 const nodeFetch: typeof import("node-fetch").default = require("node-fetch");
 const fs: typeof import("fs") = require("node:fs");
 const path: typeof import("path") = require("node:path");
 const process: typeof import("process") = require("node:process");
-const { promisify }: typeof import("util") = require("node:util");
-const { exec }: typeof import("child_process") = require("node:child_process");
 const remote: typeof import("@electron/remote") = require("@electron/remote");
+const { ipcRenderer }: typeof import("electron") = require("electron");
 const FormData: typeof import("form-data") = require("form-data");
 const argon2: typeof import("argon2") = require("argon2");
-
-const execAsync = promisify(exec);
 const USAGE_PATH = path.join(WINBOAT_DIR, "appUsage.json");
 export const logger = createLogger(path.join(WINBOAT_DIR, "winboat.log"));
 
@@ -487,6 +484,16 @@ export class Winboat {
         this.containerActionLoading.value = true;
         try {
             await this.containerMgr!.container("start");
+
+            if (this.#wbConfig?.config.lookingGlassEnabled && fs.existsSync('/dev/kvmfr0')) {
+                try {
+                    await ipcRenderer.invoke('lg-client:start');
+                    logger.info('Looking Glass client start requested');
+                } catch (e) {
+                    logger.warn('Failed to start Looking Glass client');
+                    logger.warn(e);
+                }
+            }
         } catch (e) {
             logger.error("There was an error performing the container action.");
             logger.error(e);
@@ -499,6 +506,17 @@ export class Winboat {
     async stopContainer() {
         logger.info("Stopping WinBoat container...");
         this.containerActionLoading.value = true;
+
+        if (this.#wbConfig?.config.lookingGlassEnabled) {
+            try {
+                await ipcRenderer.invoke('lg-client:stop');
+                logger.info('Looking Glass client stop requested');
+            } catch (e) {
+                logger.warn('Failed to stop Looking Glass client');
+                logger.warn(e);
+            }
+        }
+
         await this.containerMgr!.container("stop");
         logger.info("Successfully stopped WinBoat container");
         this.containerActionLoading.value = false;
@@ -594,11 +612,8 @@ export class Winboat {
         const compose = Winboat.readCompose(this.containerMgr!.composeFilePath);
         const storage = compose.services.windows.volumes.find(vol => vol.includes("/storage"));
         if (storage?.startsWith("data:")) {
-            if (this.#wbConfig?.config.containerRuntime !== ContainerRuntimes.DOCKER) {
-                logger.error("Volume not supported on podman runtime");
-            }
             // In this case we have a volume (legacy)
-            await execAsync("docker volume rm winboat_data");
+            await this.containerMgr!.removeVolume("winboat_data");
             console.info("Removed volume");
         } else {
             const storageFolder = storage?.split(":").at(0) ?? null;

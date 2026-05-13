@@ -145,6 +145,35 @@
         <div v-show="wbConfig.config.experimentalFeatures" :key="rerenderExperimental">
             <x-label class="mb-4 text-neutral-300">Devices</x-label>
             <div class="flex flex-col gap-4">
+                <!-- Looking Glass -->
+                <x-card class="flex relative z-20 flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20">
+                    <div class="w-full">
+                        <div class="flex flex-row gap-2 items-center mb-2">
+                            <Icon class="inline-flex text-violet-400 size-8" icon="mdi:monitor-eye"></Icon>
+                            <h1 class="my-0 text-lg font-semibold">
+                                Looking Glass (IVSHMEM)
+                                <span class="bg-violet-500 rounded-full px-3 py-0.5 text-sm ml-2">
+                                    Experimental
+                                </span>
+                            </h1>
+                        </div>
+                        <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                            Enables low-latency shared-memory display bridge via /dev/kvmfr0
+                        </p>
+                        <p v-if="lookingGlassWarning" class="text-yellow-400 text-xs mt-2 mb-0">
+                            {{ lookingGlassWarning }}
+                        </p>
+                    </div>
+                    <div class="flex flex-row justify-center items-center gap-2">
+                        <x-switch
+                            :toggled="wbConfig.config.lookingGlassEnabled"
+                            @toggle="(_: any) => wbConfig.config.lookingGlassEnabled = !wbConfig.config.lookingGlassEnabled"
+                            :disabled="!kvmfrDeviceExists"
+                            size="large"
+                        ></x-switch>
+                    </div>
+                </x-card>
+
                 <!-- USB Passthrough -->
                 <x-card class="flex relative z-20 flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20">
                     <div class="w-full">
@@ -541,6 +570,11 @@ import { Icon } from '@iconify/vue';
 import { WinboatConfig } from '../lib/config';
 import { USBManager, type PTSerializableDeviceInfo } from '../lib/usbmanager';
 import { DesktopLauncherManager } from '../lib/launcher';
+import {
+    applyLookingGlassToCompose,
+    isLookingGlassDeviceAvailable,
+    removeLookingGlassFromCompose,
+} from '../lib/looking-glass';
 import { type Device } from "usb";
 import {
     PORT_MAX,
@@ -552,6 +586,7 @@ import {
 } from '../lib/constants';
 import { PortManager } from '../utils/port';
 const { app }: typeof import('@electron/remote') = require('@electron/remote');
+const fs: typeof import('node:fs') = require('node:fs');
 
 // Emits
 const $emit = defineEmits(["rerender"]);
@@ -579,6 +614,7 @@ const origAutoStartContainer = ref(false);
 const autoStartContainer = ref(false);
 const freerdpPort = ref(0);
 const origFreerdpPort = ref(0);
+const origLookingGlassEnabled = ref(false);
 const isApplyingChanges = ref(false);
 const resetQuestionCounter = ref(0);
 const isResettingWinboat = ref(false);
@@ -588,6 +624,7 @@ const origApplicationScale = ref(0);
 // For USB Devices
 const availableDevices = ref<Device[]>([]);
 const rerenderExperimental = ref(0);
+const kvmfrDeviceExists = ref(false);
 // ^ This ref is needed because reactivity fails on wbConfig. 
 //   We manually increment this value in toggleExperimentalFeatures() to force rerender.
 
@@ -600,6 +637,7 @@ let qmpPortManager = ref<PortManager | null>(null);
 const wbConfig = new WinboatConfig();
 
 onMounted(async () => {
+    kvmfrDeviceExists.value = isLookingGlassDeviceAvailable();
     await assignValues();
 });
 
@@ -644,6 +682,9 @@ async function assignValues() {
     freerdpPort.value = qmpPortManager.value.getHostPort(GUEST_RDP_PORT);
     origFreerdpPort.value = freerdpPort.value;
 
+    origLookingGlassEnabled.value = wbConfig.config.lookingGlassEnabled;
+    kvmfrDeviceExists.value = fs.existsSync('/dev/kvmfr0');
+
     origApplicationScale.value = wbConfig.config.scaleDesktop;
 
     const specs = await getSpecs();
@@ -673,6 +714,12 @@ async function saveDockerCompose() {
 
     qmpPortManager.value!.setPortMapping(GUEST_RDP_PORT, freerdpPort.value);
     compose.value!.services.windows.ports = qmpPortManager.value!.composeFormat;
+
+    if (wbConfig.config.lookingGlassEnabled) {
+        compose.value = applyLookingGlassToCompose(compose.value!);
+    } else {
+        compose.value = removeLookingGlassFromCompose(compose.value!);
+    }
 
     isApplyingChanges.value = true;
     try {
@@ -756,13 +803,22 @@ const usbPassthroughDisabled = computed(() => {
     return !hasUsbVolume(compose) || !hasQmpArgument(compose) || !hasQmpPort() || !hasHostPort(compose);
 })
 
+const lookingGlassWarning = computed(() => {
+    if (!kvmfrDeviceExists.value) {
+        return 'IVSHMEM device (/dev/kvmfr0) not found. Run: sudo modprobe kvmfr static_size_mb=128';
+    }
+
+    return null;
+});
+
 const saveButtonDisabled = computed(() => {
     const hasResourceChanges = 
         origNumCores.value !== numCores.value || 
         origRamGB.value !== ramGB.value || 
         shareHomeFolder.value !== origShareHomeFolder.value || 
         freerdpPort.value !== origFreerdpPort.value ||
-        autoStartContainer.value !== origAutoStartContainer.value;
+        autoStartContainer.value !== origAutoStartContainer.value ||
+        wbConfig.config.lookingGlassEnabled !== origLookingGlassEnabled.value;
 
     const shouldBeDisabled = 
         errors.value.length || 

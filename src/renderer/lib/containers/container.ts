@@ -23,6 +23,7 @@ export abstract class ContainerManager {
     abstract container(action: ContainerAction): Promise<void>;
     abstract port(): Promise<ComposePortEntry[]>;
     abstract remove(): Promise<void>;
+    abstract removeVolume(volumeName: string): Promise<void>;
     abstract getStatus(): Promise<ContainerStatus>;
     abstract exists(): Promise<boolean>;
 

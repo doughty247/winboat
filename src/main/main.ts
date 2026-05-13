@@ -4,6 +4,7 @@ import { initialize, enable } from '@electron/remote/main/index.js';
 import Store from 'electron-store';
 import * as fs from 'fs';
 import * as os from 'os';
+import { disposeLookingGlassClient, getLookingGlassClient, type LGClientConfig } from './services/looking-glass-client.js';
 
 // Suppress EPIPE errors BEFORE anything else (must be first!)
 process.on('uncaughtException', (err) => {
@@ -76,6 +77,19 @@ const windowStore = new Store<SchemaType>({ schema: {
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 let isQuitting = false;
+let lgClient: ReturnType<typeof getLookingGlassClient> | null = null;
+
+function ensureLGClient() {
+    if (!lgClient) {
+        const config: LGClientConfig = {
+            shmFile: '/dev/kvmfr0',
+            fullscreen: false,
+        };
+        lgClient = getLookingGlassClient(config);
+    }
+
+    return lgClient;
+}
 
 // Check for --launch-app argument early (needed in multiple places)
 const launchAppIndex = process.argv.findIndex(arg => arg === '--launch-app');
@@ -490,9 +504,11 @@ if (!gotLock) {
     });
 });
 
-app.on('before-quit', () => {
+app.on('before-quit', async () => {
     isQuitting = true;
     console.log('[WinBoat] Application quitting, cleaning up...');
+
+    await disposeLookingGlassClient();
     
     // Destroy tray icon
     if (tray) {
@@ -527,6 +543,35 @@ app.on("second-instance", (event, commandLine, workingDirectory) => {
 ipcMain.on('message', (event, message) => {
     console.log(message);
 })
+
+ipcMain.handle('lg-client:start', async () => {
+    try {
+        const client = ensureLGClient();
+        await client.start();
+        return { success: true };
+    } catch (e: any) {
+        return { success: false, error: e?.message || 'Unknown error' };
+    }
+});
+
+ipcMain.handle('lg-client:stop', async () => {
+    try {
+        if (lgClient) {
+            await lgClient.stop();
+        }
+        return { success: true };
+    } catch (e: any) {
+        return { success: false, error: e?.message || 'Unknown error' };
+    }
+});
+
+ipcMain.handle('lg-client:status', () => {
+    return lgClient?.getStatus() || 'stopped';
+});
+
+ipcMain.handle('lg-client:is-running', () => {
+    return lgClient?.isRunning() || false;
+});
 
 // Handle getting home directory for path conversion
 ipcMain.handle('get-home-dir', () => {
