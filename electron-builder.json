@@ -1,5 +1,5 @@
 {
-  "appId": "com.teabox.winboat",
+  "appId": "com.teabox.winboatgpuplus",
   "directories": {
     "output": "dist"
   },
@@ -8,7 +8,7 @@
     "oneClick": false,
     "perMachine": false,
     "allowToChangeInstallationDirectory": true,
-    "shortcutName": "WinBoat"
+    "shortcutName": "WinBoat GPU Plus"
   },
   "win": {
     "target": "nsis"

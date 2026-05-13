@@ -93,7 +93,7 @@ function createTray() {
     
     const contextMenu = Menu.buildFromTemplate([
         {
-            label: 'Show WinBoat',
+            label: 'Show WinBoat GPU Plus',
             click: () => {
                 if (mainWindow) {
                     mainWindow.show();
@@ -103,7 +103,7 @@ function createTray() {
             }
         },
         {
-            label: 'Hide WinBoat',
+            label: 'Hide WinBoat GPU Plus',
             click: () => {
                 if (mainWindow) {
                     mainWindow.hide();
@@ -112,7 +112,7 @@ function createTray() {
         },
         { type: 'separator' },
         {
-            label: 'Quit WinBoat',
+            label: 'Quit WinBoat GPU Plus',
             click: () => {
                 console.log('[WinBoat] Quit requested from tray menu');
                 isQuitting = true;
@@ -122,7 +122,7 @@ function createTray() {
     ]);
     
     tray.setContextMenu(contextMenu);
-    tray.setToolTip('WinBoat - Windows App Integration');
+    tray.setToolTip('WinBoat GPU Plus - Windows App Integration');
     
     // Double-click to show window
     tray.on('double-click', () => {

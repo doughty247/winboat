@@ -5,13 +5,28 @@
         <img src="icons/winboat_logo.svg" alt="WinBoat Logo" width="150">
       </td>
       <td>
-        <h1 style="color: #7C86FF; margin: 0; font-size: 32px;">WinBoat</h1>
-        <p style="color: oklch(90% 0 0); font-size: 14px; margin: 5px 0;">Windows for Penguins.<br>
-        Run Windows apps on 🐧 Linux with ✨ seamless integration</p>
+        <h1 style="color: #7C86FF; margin: 0; font-size: 32px;">WinBoat GPU Plus</h1>
+        <p style="color: oklch(90% 0 0); font-size: 14px; margin: 5px 0;">Community fork focused on GPU passthrough plus additional optional features.<br>
+        Based on WinBoat and kept aligned with upstream where possible.</p>
       </td>
     </tr>
   </table>
 </div>
+
+## Fork Direction
+
+WinBoat GPU Plus is a solo-maintained fork with a practical scope:
+
+- Keep upstream compatibility and mergeability as a default
+- Prioritize GPU passthrough and graphics-focused workflows
+- Add optional integrations that are useful but not required for core use
+
+## Current Phases
+
+1. Phase 1 - Upstream alignment baseline: Completed
+2. Phase 2 - Runtime hardening and launcher stability: In progress
+3. Phase 3 - GPU plus feature set (optional modules): Planned
+4. Phase 4 - Packaging, QA matrix, and release automation: Planned
 
 ## Screenshots
 
@@ -21,18 +36,18 @@
   <img src="gh-assets/features/feat_native.png" alt="Native Windows" width="45%">
 </div>
 
-## ⚠️ Work in Progress ⚠️
+## Work in Progress
 
 WinBoat is currently in beta, so expect to occasionally run into hiccups and bugs. You should be comfortable with some level of troubleshooting if you decide to try it, however we encourage you to give it a shot anyway.
 
 ## Features
 
-- **🎨 Elegant Interface**: Sleek and intuitive interface that seamlessly integrates Windows into your Linux desktop environment, making it feel like a native experience
-- **📦 Automated Installs**: Simple installation process through our interface - pick your preferences & specs and let us handle the rest
-- **🚀 Run Any App**: If it runs on Windows, it can run on WinBoat. Enjoy the full range of Windows applications as native OS-level windows in your Linux environment
-- **🖥️ Full Windows Desktop**: Access the complete Windows desktop experience when you need it, or run individual apps seamlessly integrated into your Linux workflow
-- **📁 Filesystem Integration**: Your home directory is mounted in Windows, allowing easy file sharing between the two systems without any hassle
-- **✨ And many more**: Smartcard passthrough, resource monitoring, and more features being added regularly
+- **Elegant Interface**: Sleek and intuitive interface that integrates Windows into your Linux desktop environment
+- **Automated Installs**: Simple installation flow through the app UI
+- **Run Any App**: If it runs on Windows, it can run on WinBoat
+- **Full Windows Desktop**: Access the complete Windows desktop experience when needed
+- **Filesystem Integration**: Home directory sharing between Linux and Windows
+- **Additional Integrations**: Smartcard passthrough, resource monitoring, and more
 
 ## How Does It Work?
 
@@ -105,9 +120,9 @@ You can download the latest Linux builds under the [Releases](https://github.com
 
 ## Contributing
 
-Contributions are welcome! Whether it's bug fixes, feature improvements, or documentation updates, we appreciate your help making WinBoat better.
+Contributions are welcome! Whether it's bug fixes, feature improvements, or documentation updates, we appreciate your help making WinBoat GPU Plus better.
 
-**Please note**: We maintain a focus on technical contributions only. Pull requests containing political/sexual content, or other sensitive/controversial topics will not be accepted. Let's keep things focused on making great software! 🚀
+**Please note**: We maintain a focus on technical contributions only. Pull requests containing political/sexual content, or other sensitive/controversial topics will not be accepted.
 
 Feel free to:
 
@@ -130,7 +145,7 @@ They're awesome and you should check them out:
 
 - [WinApps](https://github.com/winapps-org/winapps)
 - [Cassowary](https://github.com/casualsnek/cassowary)
-- [dockur/windows](https://github.com/dockur/windows) (🌟 Also used in WinBoat)
+- [dockur/windows](https://github.com/dockur/windows) (Also used in WinBoat)
 
 ## Socials & Contact
 

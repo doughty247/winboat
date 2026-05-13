@@ -1,7 +1,7 @@
 {
-    "name": "winboat",
+    "name": "winboat-gpu-plus",
     "version": "0.9.0",
-    "description": "Windows for Penguins",
+    "description": "WinBoat GPU Plus community fork",
     "type": "module",
     "main": "main/main.js",
     "engines": {
