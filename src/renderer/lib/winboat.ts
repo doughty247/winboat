@@ -643,6 +643,7 @@ export class Winboat {
         }
 
         const cleanAppName = app.Name.replaceAll(/[,.'"]/g, "");
+        const remoteAppWmClass = "WinBoat-RemoteApp";
         const { username, password } = this.getCredentials();
 
         const rdpHostPort = getActiveHostPort(this.containerMgr!, CommonPorts.RDP)!;
@@ -677,7 +678,7 @@ export class Winboat {
                 "-wallpaper",
                 this.#wbConfig?.config.multiMonitor === MultiMonitorMode.MultiMon ? "/multimon" : "",
                 `/scale-desktop:${this.#wbConfig?.config.scaleDesktop ?? 100}`,
-                `/wm-class:winboat-${cleanAppName}`,
+                `/wm-class:${remoteAppWmClass}`,
                 `/app:program:${app.Path},name:${cleanAppName},cmd:"${app.Args}"`,
             ]);
         }

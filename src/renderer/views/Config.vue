@@ -160,6 +160,9 @@
                         <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
                             Enables low-latency shared-memory display bridge via /dev/kvmfr0
                         </p>
+                        <p class="text-xs mt-2 mb-0" :class="lookingGlassStatusClass">
+                            Status: {{ lookingGlassStatusLabel }}
+                        </p>
                         <p v-if="lookingGlassWarning" class="text-yellow-400 text-xs mt-2 mb-0">
                             {{ lookingGlassWarning }}
                         </p>
@@ -562,7 +565,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { ContainerStatus, Winboat } from '../lib/winboat';
 import type { ComposeConfig } from '../../types';
 import { getSpecs } from '../lib/specs';
@@ -587,6 +590,7 @@ import {
 import { PortManager } from '../utils/port';
 const { app }: typeof import('@electron/remote') = require('@electron/remote');
 const fs: typeof import('node:fs') = require('node:fs');
+const { ipcRenderer }: typeof import('electron') = require('electron');
 
 // Emits
 const $emit = defineEmits(["rerender"]);
@@ -625,6 +629,8 @@ const origApplicationScale = ref(0);
 const availableDevices = ref<Device[]>([]);
 const rerenderExperimental = ref(0);
 const kvmfrDeviceExists = ref(false);
+const lookingGlassStatus = ref('stopped');
+let lookingGlassStatusInterval: NodeJS.Timeout | null = null;
 // ^ This ref is needed because reactivity fails on wbConfig. 
 //   We manually increment this value in toggleExperimentalFeatures() to force rerender.
 
@@ -638,7 +644,52 @@ const wbConfig = new WinboatConfig();
 
 onMounted(async () => {
     kvmfrDeviceExists.value = isLookingGlassDeviceAvailable();
+    await refreshLookingGlassStatus();
+    lookingGlassStatusInterval = setInterval(() => {
+        refreshLookingGlassStatus();
+    }, 2000);
     await assignValues();
+});
+
+onUnmounted(() => {
+    if (lookingGlassStatusInterval) {
+        clearInterval(lookingGlassStatusInterval);
+        lookingGlassStatusInterval = null;
+    }
+});
+
+async function refreshLookingGlassStatus() {
+    try {
+        lookingGlassStatus.value = await ipcRenderer.invoke('lg-client:status');
+    } catch {
+        lookingGlassStatus.value = 'stopped';
+    }
+}
+
+const lookingGlassStatusLabel = computed(() => {
+    switch (lookingGlassStatus.value) {
+        case 'running':
+            return 'Running';
+        case 'starting':
+            return 'Starting';
+        case 'error':
+            return 'Error';
+        default:
+            return 'Stopped';
+    }
+});
+
+const lookingGlassStatusClass = computed(() => {
+    switch (lookingGlassStatus.value) {
+        case 'running':
+            return 'text-green-400';
+        case 'starting':
+            return 'text-yellow-300';
+        case 'error':
+            return 'text-red-400';
+        default:
+            return 'text-neutral-400';
+    }
 });
 
 function ensureNumericInput(e: any) {

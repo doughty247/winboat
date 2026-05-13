@@ -312,7 +312,7 @@ $FREERDP_BIN \\
     /floatbar \\
     /compression \\
     /scale-desktop:100 \\
-    /wm-class:"$APP_NAME" \\
+    /wm-class:"WinBoat-RemoteApp" \\
     /app:program:"$APP_PATH",name:"$APP_NAME" &
 `;
     }
@@ -341,6 +341,7 @@ Exec="${wrapperScript}" "${escapedAppPath}"
 Icon=${iconPath.startsWith('/') ? iconPath : '/home/bazzite/Documents/winboat/winboat-clean/icons/icon.png'}
 Terminal=false
 Categories=X-WinBoat-App;
+StartupWMClass=WinBoat-RemoteApp
 StartupNotify=true
 `;
     }
