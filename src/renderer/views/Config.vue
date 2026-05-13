@@ -1,102 +1,140 @@
 <template>
-    <div class="flex flex-col gap-10 overflow-x-hidden" :class="{ hidden: !maxNumCores }">
+    <div class="flex flex-col gap-10 overflow-x-hidden" :class="{ 'hidden': !maxNumCores }">
         <div>
             <x-label class="mb-4 text-neutral-300">Container</x-label>
             <div class="flex flex-col gap-4">
                 <!-- RAM Allocation -->
-                <ConfigCard
-                    icon="game-icons:ram"
-                    title="RAM Allocation"
-                    desc="How many gigabytes of RAM are allocated to the Windows virtual machine"
-                    type="number"
-                    unit="GB"
-                    :min="2"
-                    :max="maxRamGB"
-                    v-model:value="ramGB"
-                />
+                <x-card
+                    class="flex flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20">
+                    <div>
+                        <div class="flex flex-row gap-2 items-center mb-2">
+                            <Icon class="inline-flex text-violet-400 size-8" icon="game-icons:ram"></Icon>
+                            <h1 class="my-0 text-lg font-semibold">
+                                RAM Allocation
+                            </h1>
+                        </div>
+                        <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                            How many gigabytes of RAM are allocated to the Windows virtual machine
+                        </p>
+                    </div>
+                    <div class="flex flex-row gap-2 justify-center items-center">
+                        <x-input
+                            class="max-w-16 text-right text-[1.1rem]"
+                            min="4"
+                            :max="maxRamGB"
+                            :value="ramGB"
+                            @input="(e: any) => ramGB = Number(/^\d+$/.exec(e.target.value)![0] || 4)"
+                            required
+                        ></x-input>
+                        <p class="text-neutral-100">GB</p>
+                    </div>
+                </x-card>
 
                 <!-- CPU Cores -->
-                <ConfigCard
-                    icon="solar:cpu-bold"
-                    title="CPU Cores"
-                    desc="How many CPU Cores are allocated to the Windows virtual machine"
-                    type="number"
-                    unit="Cores"
-                    :min="2"
-                    :max="maxNumCores"
-                    v-model:value="numCores"
-                />
+                <x-card
+                    class="flex flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20">
+                    <div>
+                        <div class="flex flex-row gap-2 items-center mb-2">
+                            <Icon class="inline-flex text-violet-400 size-8" icon="solar:cpu-bold"></Icon>
+                            <h1 class="my-0 text-lg font-semibold">
+                                CPU Cores
+                            </h1>
+                        </div>
+                        <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                            How many CPU Cores are allocated to the Windows virtual machine
+                        </p>
+                    </div>
+                    <div class="flex flex-row gap-2 justify-center items-center">
+                        <x-input
+                            class="max-w-16 text-right text-[1.1rem]"
+                            min="2"
+                            :max="maxNumCores"
+                            :value="numCores"
+                            @input="(e: any) => numCores = Number(/^\d+$/.exec(e.target.value)![0] || 4)"
+                            required
+                        ></x-input>
+                        <p class="text-neutral-100">Cores</p>
+                    </div>
+                </x-card>
 
-                <!-- Shared Folder -->
-                <ConfigCard
-                    icon="fluent:folder-link-32-filled"
-                    title="Shared Folder"
-                    type="switch"
-                    v-model:value="shareFolder"
-                >
-                    <template v-slot:desc>
-                        If enabled, you will be able to access your selected folder within Windows under
-                        <span class="font-mono bg-neutral-700 rounded-md px-1 py-0.5">Network\host.lan</span>
-                    </template>
-                </ConfigCard>
-
-                <!-- Shared Folder Location -->
-                <ConfigCard
-                    v-if="shareFolder"
-                    icon="mdi:folder-cog"
-                    title="Shared Folder Location"
-                    type="custom"
-                >
-                    <template v-slot:desc>
-                        <span v-if="sharedFolderPath">
-                            Currently sharing: <span class="font-mono bg-neutral-700 rounded-md px-1 py-0.5">{{ sharedFolderPath }}</span>
-                        </span>
-                        <span v-else>
-                            Select a folder to share with Windows
-                        </span>
-                    </template>
-                    <x-button @click="selectSharedFolder">
-                        Browse
-                    </x-button>
-                </ConfigCard>
+                <!-- Shared Home Folder -->
+                <x-card class="flex relative z-20 flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20">
+                    <div>
+                        <div class="flex flex-row items-center gap-2 mb-2">
+                            <Icon class="text-violet-400 inline-flex size-8" icon="fluent:folder-link-32-filled"></Icon>
+                            <h1 class="text-lg my-0 font-semibold">
+                                Shared Home Folder
+                            </h1>
+                        </div>
+                        <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                            If enabled, you will be able to access your Linux home folder within Windows under 
+                            <span class="font-mono bg-neutral-700 rounded-md px-1 py-0.5">Network\host.lan</span>
+                        </p>
+                    </div>
+                    <div class="flex flex-row justify-center items-center gap-2">
+                        <x-switch
+                            :toggled="shareHomeFolder"
+                            @toggle="(_: any) => shareHomeFolder = !shareHomeFolder"
+                            size="large"
+                        ></x-switch>
+                    </div>
+                </x-card>
 
                 <!-- Auto Start Container -->
-                <ConfigCard
-                    icon="clarity:power-solid"
-                    title="Auto Start Container"
-                    desc="If enabled, the Windows container will automatically be started when the system boots up"
-                    type="switch"
-                    v-model:value="autoStartContainer"
-                />
+                <x-card class="flex relative z-20 flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20">
+                    <div>
+                        <div class="flex flex-row items-center gap-2 mb-2">
+                            <Icon class="text-violet-400 inline-flex size-8" icon="clarity:power-solid"></Icon>
+                            <h1 class="text-lg my-0 font-semibold">
+                                Auto Start Container
+                            </h1>
+                        </div>
+                        <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                            If enabled, the Windows container will automatically be started when the system boots up
+                        </p>
+                    </div>
+                    <div class="flex flex-row justify-center items-center gap-2">
+                        <x-switch
+                            :toggled="autoStartContainer"
+                            @toggle="(_: any) => autoStartContainer = !autoStartContainer"
+                            size="large"
+                        ></x-switch>
+                    </div>
+                </x-card>
 
                 <!-- FreeRDP Port -->
-                <ConfigCard
-                    icon="lucide:ethernet-port"
-                    title="FreeRDP Port"
-                    desc="You can change what port FreeRDP uses to communicate with the VM"
-                    type="custom"
-                >
-                    <x-input
-                        class="max-w-16 text-right text-[1.1rem]"
-                        :value="Number.isNaN(freerdpPort) ? '' : freerdpPort"
-                        @input="
-                            (e: any) => {
-                                freerdpPort = Number(
-                                    /^\d+$/.exec(e.target.value)?.at(0) ||
-                                        portMapper?.getShortPortMapping(GUEST_RDP_PORT)?.host,
-                                );
-                            }
-                        "
-                    >
-                        <x-label v-if="Number.isNaN(freerdpPort)">None</x-label>
-                    </x-input>
-                </ConfigCard>
+                <x-card
+                    class="flex items-center p-2 flex-row justify-between w-full py-3 my-0 bg-neutral-800/20 backdrop-brightness-150 backdrop-blur-xl">
+                    <div>
+                        <div class="flex flex-row items-center gap-2 mb-2">
+                            <Icon class="text-violet-400 inline-flex size-8" icon="lucide:ethernet-port"></Icon>
+                            <h1 class="text-lg my-0 font-semibold">
+                                FreeRDP Port
+                            </h1>
+                        </div>
+                        <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                            You can change what port FreeRDP uses to communicate with the VM
+                        </p>
+                    </div>
+                    <div class="flex flex-row justify-center items-center gap-2">
+                        <x-input
+                            class="max-w-16 text-right text-[1.1rem]"
+                            min="0"
+                            :max="PORT_MAX"
+                            :value="freerdpPort"
+                            @input="(e: any) => freerdpPort = Number(/^\d+$/.exec(e.target.value)![0] || winboat.getHostPort(GUEST_RDP_PORT))"
+                            required
+                        ></x-input>
+                    </div>
+                </x-card>
                 <div class="flex flex-col">
-                    <p class="my-0 text-red-500" v-for="(error, k) of errors" :key="k">❗ {{ error }}</p>
+                    <p class="my-0 text-red-500" v-for="error, k of errors" :key="k">
+                        ❗ {{ error }}
+                    </p>
                 </div>
                 <x-button
                     :disabled="saveButtonDisabled || isUpdatingUSBPrerequisites"
-                    @click="saveCompose()"
+                    @click="saveDockerCompose()"
                     class="w-24"
                 >
                     <span v-if="!isApplyingChanges || isUpdatingUSBPrerequisites">Save</span>
@@ -104,32 +142,31 @@
                 </x-button>
             </div>
         </div>
-        <div v-show="wbConfig.config.experimentalFeatures">
+        <div v-show="wbConfig.config.experimentalFeatures" :key="rerenderExperimental">
             <x-label class="mb-4 text-neutral-300">Devices</x-label>
             <div class="flex flex-col gap-4">
                 <!-- USB Passthrough -->
-                <x-card
-                    class="flex relative z-20 flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20"
-                >
+                <x-card class="flex relative z-20 flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20">
                     <div class="w-full">
                         <div class="flex flex-row gap-2 items-center mb-2">
                             <Icon class="inline-flex text-violet-400 size-8" icon="fluent:tv-usb-24-filled"></Icon>
                             <h1 class="my-0 text-lg font-semibold">
                                 USB Passthrough
-                                <span class="bg-violet-500 rounded-full px-3 py-0.5 text-sm ml-2"> Experimental </span>
+                                <span class="bg-violet-500 rounded-full px-3 py-0.5 text-sm ml-2">
+                                    Experimental
+                                </span>
                             </h1>
                         </div>
-
                         <template v-if="usbPassthroughDisabled || isUpdatingUSBPrerequisites">
-                            <x-card
+                            <x-card 
                                 class="flex items-center py-2 w-full my-2 backdrop-blur-xl gap-4 backdrop-brightness-150 bg-yellow-200/10"
                             >
                                 <Icon class="inline-flex text-yellow-500 size-8" icon="clarity:warning-solid"></Icon>
                                 <h1 class="my-0 text-base font-normal text-yellow-200">
-                                    We need to update your Compose in order to use this feature!
+                                    We need to update your Docker Compose in order to use this feature!
                                 </h1>
 
-                                <x-button
+                                <x-button 
                                     :disabled="isUpdatingUSBPrerequisites"
                                     class="mt-1 !bg-gradient-to-tl from-yellow-200/20 to-transparent ml-auto hover:from-yellow-300/30 transition !border-0"
                                     @click="addRequiredComposeFieldsUSB"
@@ -145,71 +182,38 @@
                                 </x-button>
                             </x-card>
                         </template>
-                        <template v-if="wbConfig.config.containerRuntime === ContainerRuntimes.PODMAN">
-                            <x-card
-                                class="flex items-center py-2 w-full my-2 backdrop-blur-xl gap-4 backdrop-brightness-150 bg-yellow-200/10"
-                            >
-                                <Icon class="inline-flex text-yellow-500 size-8" icon="clarity:warning-solid"></Icon>
-                                <h1 class="my-0 text-base font-normal text-yellow-200">
-                                    USB Passthrough is not yet supported while using Podman as the container runtime.
-                                </h1>
-                            </x-card>
-                        </template>
-                        <template
-                            v-if="
-                                !usbPassthroughDisabled &&
-                                !isUpdatingUSBPrerequisites &&
-                                wbConfig.config.containerRuntime === ContainerRuntimes.DOCKER
-                            "
-                        >
-                            <x-label
-                                class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0"
+                        <template v-else>
+                            <x-label 
+                                class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0" 
                                 v-if="usbManager.ptDevices.value.length == 0"
                             >
                                 Press the button below to add USB devices to your passthrough list
                             </x-label>
                             <TransitionGroup name="devices" tag="x-box" class="flex-col gap-2 mt-4">
-                                <x-card
+                                <x-card 
                                     class="flex justify-between items-center px-2 py-0 m-0 bg-white/5"
-                                    v-for="device of usbManager.ptDevices.value"
+                                    v-for="device of usbManager.ptDevices.value" 
                                     :key="`${device.vendorId}-${device.productId}`"
-                                    :class="{
-                                        'bg-white/[calc(0.05*0.75)] [&_*:not(div):not(span)]:opacity-75':
-                                            !usbManager.isPTDeviceConnected(device),
-                                    }"
+                                    :class="{ 'bg-white/[calc(0.05*0.75)] [&_*:not(div):not(span)]:opacity-75': !usbManager.isPTDeviceConnected(device) }"
                                 >
-                                    <div class="flex flex-row gap-2 items-center">
-                                        <span
-                                            v-if="
-                                                usbManager.isMTPDevice(device) ||
-                                                usbManager
-                                                    .stringifyPTSerializableDevice(device)
-                                                    .toLowerCase()
-                                                    .includes('mtp')
-                                            "
-                                            class="relative group"
-                                        >
-                                            <Icon
-                                                icon="clarity:warning-solid"
-                                                class="text-yellow-300 size-7 cursor-pointer"
-                                            />
+                                    <div class="flex flex-row gap-2 items-center"> 
+                                        <span v-if="usbManager.isMTPDevice(device) || usbManager.stringifyPTSerializableDevice(device).toLowerCase().includes('mtp')" class="relative group">
+                                            <Icon icon="clarity:warning-solid" class="text-yellow-300 size-7 cursor-pointer" />
                                             <span
-                                                class="absolute bottom-5 z-50 w-[320px] bg-neutral-800/90 backdrop-blur-sm text-xs text-gray-300 rounded-lg shadow-lg px-3 py-2 hidden group-hover:block transition-opacity duration-200 pointer-events-none"
+                                                class="absolute bottom-5 z-50 w-[320px] bg-neutral-800/90 backdrop-blur-sm text-xs text-gray-300 rounded-lg shadow-lg px-3 py-2
+                                                hidden group-hover:block transition-opacity duration-200 pointer-events-none" 
                                             >
-                                                This device appears to be using the MTP protocol, which is known for
-                                                being problematic. Some Desktop Environments automatically mount MTP
-                                                devices, which in turn causes WinBoat to not be able to pass the device
-                                                through.
+                                                This device appears to be using the MTP protocol, which is known for being problematic.
+                                                Some Desktop Environments automatically mount MTP devices, which in turn causes WinBoat to not be able 
+                                                to pass the device through.
                                             </span>
                                         </span>
 
                                         <span v-if="!usbManager.isPTDeviceConnected(device)" class="relative group">
-                                            <Icon
-                                                icon="ix:connection-fail"
-                                                class="text-red-500 size-7 cursor-pointer"
-                                            />
+                                            <Icon icon="ix:connection-fail" class="text-red-500 size-7 cursor-pointer" />
                                             <span
-                                                class="absolute bottom-5 z-50 w-[320px] bg-neutral-800/90 backdrop-blur-sm text-xs text-gray-300 rounded-lg shadow-lg px-3 py-2 hidden group-hover:block transition-opacity duration-200 pointer-events-none"
+                                                class="absolute bottom-5 z-50 w-[320px] bg-neutral-800/90 backdrop-blur-sm text-xs text-gray-300 rounded-lg shadow-lg px-3 py-2
+                                                hidden group-hover:block transition-opacity duration-200 pointer-events-none" 
                                             >
                                                 This device is currently not connected.
                                             </span>
@@ -219,15 +223,12 @@
                                             {{ usbManager.stringifyPTSerializableDevice(device) }}
                                         </p>
                                     </div>
-                                    <x-button
-                                        @click="removeDevice(device)"
-                                        class="mt-1 !bg-gradient-to-tl from-red-500/20 to-transparent hover:from-red-500/30 transition !border-0"
-                                    >
+                                    <x-button @click="removeDevice(device)" class="mt-1 !bg-gradient-to-tl from-red-500/20 to-transparent hover:from-red-500/30 transition !border-0">
                                         <x-icon href="#remove"></x-icon>
                                     </x-button>
                                 </x-card>
                             </TransitionGroup>
-                            <x-button
+                            <x-button 
                                 v-if="availableDevices.length > 0"
                                 class="!bg-gradient-to-tl from-blue-400/20 shadow-md shadow-blue-950/20 to-transparent hover:from-blue-400/30 transition"
                                 :class="{ 'mt-4': usbManager.ptDevices.value.length }"
@@ -236,8 +237,8 @@
                                 <x-icon href="#add"></x-icon>
                                 <x-label>Add Device</x-label>
                                 <TransitionGroup ref="usbMenu" name="menu" tag="x-menu" class="max-h-52">
-                                    <x-menuitem
-                                        v-for="(device, k) of availableDevices as Device[]"
+                                    <x-menuitem 
+                                        v-for="device, k of availableDevices as Device[]" 
                                         :key="device.portNumbers.join(',')"
                                         @click="addDevice(device)"
                                     >
@@ -251,81 +252,85 @@
                         </template>
                     </div>
                 </x-card>
-            </div>
-        </div>
-        <div v-show="wbConfig.config.advancedFeatures">
-            <x-label class="mb-4 text-neutral-300">FreeRDP</x-label>
-            <div class="flex flex-col gap-4">
-                <!-- RDP args -->
-                <x-card
-                    class="flex flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20"
-                >
+
+                <!-- App Shortcuts -->
+                <x-card class="flex flex-col gap-3 p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20 relative z-10">
+                    <div class="flex flex-row justify-between items-center">
+                        <div>
+                            <div class="flex flex-row gap-2 items-center mb-2">
+                                <Icon class="inline-flex text-violet-400 size-8" icon="mdi:application-export"></Icon>
+                                <h1 class="my-0 text-lg font-semibold">
+                                    App Shortcuts
+                                    <span class="bg-violet-500 rounded-full px-3 py-0.5 text-sm ml-2">
+                                        Experimental
+                                    </span>
+                                </h1>
+                            </div>
+                            <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                                Create native Linux desktop shortcuts for Windows apps
+                            </p>
+                        </div>
+                        <div class="flex flex-row justify-center items-center gap-2">
+                            <x-switch
+                                :toggled="wbConfig.config.desktopLauncherEnabled"
+                                @toggle="toggleDesktopLauncher"
+                                size="large"
+                            ></x-switch>
+                        </div>
+                    </div>
+                    
+                    <!-- Mode Selection (shown when enabled) -->
+                    <div v-if="wbConfig.config.desktopLauncherEnabled" class="flex flex-row items-center gap-3 pl-1">
+                        <x-label class="text-neutral-300 text-sm font-medium">Mode:</x-label>
+                        <x-select 
+                            @change="(e: any) => wbConfig.config.desktopLauncherAutoSync = e.detail.newValue === 'auto'"
+                            class="w-48"
+                        >
+                            <x-menu>
+                                <x-menuitem value="manual" :toggled="!wbConfig.config.desktopLauncherAutoSync">
+                                    <x-label>Manual (Default)</x-label>
+                                </x-menuitem>
+                                <x-menuitem value="auto" :toggled="wbConfig.config.desktopLauncherAutoSync">
+                                    <x-label>Automatic</x-label>
+                                </x-menuitem>
+                            </x-menu>
+                        </x-select>
+                    </div>
+                </x-card>
+
+                <!-- Open with WinBoat -->
+                <x-card class="flex flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20">
                     <div class="w-full">
                         <div class="flex flex-row gap-2 items-center mb-2">
-                            <Icon class="inline-flex text-violet-400 size-8" icon="fluent:tv-24-filled"></Icon>
+                            <Icon class="inline-flex text-violet-400 size-8" icon="mdi:open-in-app"></Icon>
                             <h1 class="my-0 text-lg font-semibold">
-                                FreeRDP Arguments
-                                <span class="bg-blue-500 rounded-full px-3 py-0.5 text-sm ml-2"> Advanced </span>
+                                Open with WinBoat
+                                <span class="bg-violet-500 rounded-full px-3 py-0.5 text-sm ml-2">
+                                    Experimental
+                                </span>
                             </h1>
                         </div>
-
-                        <x-label
-                            v-if="wbConfig.config.rdpArgs.length == 0"
-                            class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0"
-                        >
-                            Press the buttons below to add arguments to FreeRDP, you can choose to either add a new
-                            argument or modify an existing one to your liking via replacement
-                        </x-label>
-                        <TransitionGroup name="devices" tag="x-box" class="flex-col gap-2 mt-4">
-                            <x-card
-                                class="flex justify-between items-center gap-2 px-2 py-0 m-0 bg-white/5"
-                                v-for="(arg, index) in wbConfig.config.rdpArgs"
-                                :key="index"
+                        <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                            Right-click .exe files in your file manager to launch them with WinBoat
+                        </p>
+                        <template v-if="!shareHomeFolder">
+                            <x-card 
+                                class="flex items-center py-2 w-full my-2 backdrop-blur-xl gap-4 backdrop-brightness-150 bg-yellow-200/10"
                             >
-                                <div class="grid grid-cols-2 gap-2 items-center w-full">
-                                    <x-input
-                                        type="text"
-                                        class="!max-w-full"
-                                        v-if="arg.isReplacement"
-                                        :value="arg.original"
-                                        @input="(e: any) => (arg.original = e.target.value)"
-                                    >
-                                        <x-label>Original Argument</x-label>
-                                    </x-input>
-                                    <x-input
-                                        type="text"
-                                        class="!max-w-full !mt-0"
-                                        :class="{ 'col-span-2': !arg.isReplacement }"
-                                        :value="arg.newArg"
-                                        @input="(e: any) => (arg.newArg = e.target.value)"
-                                    >
-                                        <x-label>New Argument</x-label>
-                                    </x-input>
-                                </div>
-                                <x-button
-                                    class="mt-1 !bg-gradient-to-tl from-red-500/20 to-transparent hover:from-red-500/30 transition !border-0"
-                                    @click="wbConfig.config.rdpArgs.splice(index, 1)"
-                                >
-                                    <x-icon href="#remove"></x-icon>
-                                </x-button>
+                                <Icon class="inline-flex text-yellow-500 size-8" icon="clarity:warning-solid"></Icon>
+                                <h1 class="my-0 text-base font-normal text-yellow-200">
+                                    This feature requires "Shared Home Folder" to be enabled
+                                </h1>
                             </x-card>
-                        </TransitionGroup>
-                        <div class="flex flex-row gap-2" :class="{ 'mt-4': wbConfig.config.rdpArgs.length }">
-                            <x-button
-                                class="!bg-gradient-to-tl from-blue-400/20 shadow-md shadow-blue-950/20 to-transparent hover:from-blue-400/30 transition"
-                                @click="wbConfig.config.rdpArgs.push({ newArg: '', isReplacement: false })"
-                            >
-                                <x-icon href="#add"></x-icon>
-                                <x-label>Add Argument</x-label>
-                            </x-button>
-                            <x-button
-                                class="!bg-gradient-to-tl from-yellow-400/20 shadow-md shadow-yellow-950/20 to-transparent hover:from-yellow-400/30 transition"
-                                @click="wbConfig.config.rdpArgs.push({ newArg: '', original: '', isReplacement: true })"
-                            >
-                                <Icon class="inline-flex size-6" icon="codex:replace" />
-                                <x-label>Replace Argument</x-label>
-                            </x-button>
-                        </div>
+                        </template>
+                    </div>
+                    <div class="flex flex-row justify-center items-center gap-2">
+                        <x-switch
+                            :toggled="wbConfig.config.openWithEnabled && shareHomeFolder"
+                            @toggle="toggleOpenWith"
+                            :disabled="!shareHomeFolder"
+                            size="large"
+                        ></x-switch>
                     </div>
                 </x-card>
             </div>
@@ -334,109 +339,182 @@
             <x-label class="mb-4 text-neutral-300">General</x-label>
             <div class="flex flex-col gap-4">
                 <!-- Display Scaling -->
-                <ConfigCard
-                    class="relative z-10"
-                    icon="uil:scaling-right"
-                    title="Display Scaling"
-                    desc="Controls how large the display scaling is."
-                    type="dropdown"
-                    unit="%"
-                    :options="[Number(100), 140, 180]"
-                    v-model:value="wbConfig.config.scale"
-                />
+                <x-card
+                    class="flex relative z-10 flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20">
+                    <div>
+                        <div class="flex flex-row gap-2 items-center mb-2">
+                            <Icon class="inline-flex text-violet-400 size-8" icon="uil:scaling-right"></Icon>
+                            <h1 class="my-0 text-lg font-semibold">
+                                Display Scaling
+                            </h1>
+                        </div>
+                        <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                            Controls how large the display scaling is.
+                        </p>
+                    </div>
+                    <div class="flex flex-row gap-2 justify-center items-center">
+                        <x-select class="w-20" @change="(e: any) => wbConfig.config.scale = Number(e.detail.newValue)">
+                            <x-menu>
+                                <x-menuitem value="100" :toggled="wbConfig.config.scale === 100">
+                                    <x-label>100%</x-label>
+                                </x-menuitem>
 
-                <!-- Application Scaling -->
-                <ConfigCard
-                    icon="uil:apps"
-                    title="Application Scaling"
-                    desc="Controls how large the application scaling is.."
-                    type="number"
-                    :step="10"
-                    :min="100"
-                    :max="500"
-                    v-model:value="wbConfig.config.scaleDesktop"
-                />
+                                <x-menuitem value="140" :toggled="wbConfig.config.scale === 140">
+                                    <x-label>140%</x-label>
+                                </x-menuitem>
+
+                                <x-menuitem value="180" :toggled="wbConfig.config.scale === 180">
+                                    <x-label>180%</x-label>
+                                </x-menuitem>
+                            </x-menu>
+                        </x-select>
+                    </div>
+                </x-card>
+
+                <x-card
+                    class="flex relative z-10 flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20">
+                    <div>
+                        <div class="flex flex-row gap-2 items-center mb-2">
+                            <Icon class="inline-flex text-violet-400 size-8" icon="uil:apps"></Icon>
+                            <h1 class="my-0 text-lg font-semibold">
+                                Application Scaling
+                            </h1>
+                        </div>
+                        <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                            Controls how large the application scaling is.
+                        </p>
+                    </div>
+                    <div class="flex flex-row gap-2 justify-center items-center">
+                        <x-button type="button" class="px-2 py-1 text-neutral-200" @click="updateApplicationScale(wbConfig.config.scaleDesktop - 10)">-</x-button>
+                        <x-input
+                            type="text"
+                            v-model="origApplicationScale"
+                            class="w-20"
+                            v-on:keydown="(e: any) => ensureNumericInput(e)"
+                            v-on:blur="(e: any) => updateApplicationScale(e.target.value)"
+                        ></x-input>
+                        <x-button type="button" class="px-2 py-1" @click="updateApplicationScale(wbConfig.config.scaleDesktop + 10)">+</x-button>
+                    </div>
+                </x-card>
 
                 <!-- Multi Monitor -->
-                <ConfigCard
-                    class="relative z-10"
-                    icon="uil:monitor"
-                    title="Multi-Monitor Support"
-                    type="dropdown"
-                    :options="Object.values(MultiMonitorMode)"
-                    v-model:value="wbConfig.config.multiMonitor"
-                >
-                    <template v-slot:desc>
-                        Controls how multiple monitors are handled. MultiMon creates separate displays for each
-                        monitor, while Span stretches the display across all monitors. Note: Span or MultiMon may
-                        work better depending on your setup.
-                    </template>
-                </ConfigCard>
+                <x-card
+                    class="flex relative z-10 flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20">
+                    <div>
+                        <div class="flex flex-row gap-2 items-center mb-2">
+                            <Icon class="inline-flex text-violet-400 size-8" icon="uil:monitor"></Icon>
+                            <h1 class="my-0 text-lg font-semibold">
+                                Multi-Monitor Support
+                            </h1>
+                        </div>
+                        <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                            Controls how multiple monitors are handled. MultiMon creates separate displays for each monitor, while Span stretches the display across all monitors. Note: Span or MultiMon may work better depending on your setup.
+                        </p>
+                    </div>
+                    <div class="flex flex-row gap-2 justify-center items-center">
+                        <x-select class="w-20" @change="(e: any) => wbConfig.config.multiMonitor = Number(e.detail.newValue)">
+                            <x-menu>
+                                <x-menuitem value="0" :toggled="wbConfig.config.multiMonitor === 0">
+                                    <x-label>None</x-label>
+                                </x-menuitem>
+
+                                <x-menuitem value="1" :toggled="wbConfig.config.multiMonitor === 1">
+                                    <x-label>MultiMon</x-label>
+                                </x-menuitem>
+
+                                <x-menuitem value="2" :toggled="wbConfig.config.multiMonitor === 2">
+                                    <x-label>Span</x-label>
+                                </x-menuitem>
+                            </x-menu>
+                        </x-select>
+                    </div>
+                </x-card>
 
                 <!-- Smartcard Passthrough -->
-                <ConfigCard
-                    icon="game-icons:swipe-card"
-                    title="Smartcard Passthrough"
-                    desc="If enabled, your smartcard readers will be passed to Windows when you start an app"
-                    type="switch"
-                    v-model:value="wbConfig.config.smartcardEnabled"
-                >
-                </ConfigCard>
+                <x-card
+                    class="flex flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20">
+                    <div>
+                        <div class="flex flex-row gap-2 items-center mb-2">
+                            <Icon class="inline-flex text-violet-400 size-8" icon="game-icons:swipe-card"></Icon>
+                            <h1 class="my-0 text-lg font-semibold">
+                                Smartcard Passthrough
+                            </h1>
+                        </div>
+                        <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                            If enabled, your smartcard readers will be passed to Windows when you start an app
+                        </p>
+                    </div>
+                    <div class="flex flex-row gap-2 justify-center items-center">
+                        <x-switch
+                            :toggled="wbConfig.config.smartcardEnabled"
+                            @toggle="(_: any) => wbConfig.config.smartcardEnabled = !wbConfig.config.smartcardEnabled"
+                            size="large"
+                        ></x-switch>
+                    </div>
+                </x-card>
 
                 <!-- RDP Monitoring -->
-                <ConfigCard
-                    icon="fluent:remote-16-filled"
-                    title="RDP Monitoring"
-                    desc="If enabled, a banner will appear when the RDP session is connected (may cause high CPU usage, disable if you notice performance issues)"
-                    type="switch"
-                    v-model:value="wbConfig.config.rdpMonitoringEnabled"
-                />
+                <x-card
+                    class="flex flex-row justify-between items-center p-2 py-3 my-0 w-full backdrop-blur-xl backdrop-brightness-150 bg-neutral-800/20">
+                    <div>
+                        <div class="flex flex-row gap-2 items-center mb-2">
+                            <Icon class="inline-flex text-violet-400 size-8" icon="fluent:remote-16-filled"></Icon>
+                            <h1 class="my-0 text-lg font-semibold">
+                                RDP Monitoring
+                            </h1>
+                        </div>
+                        <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                            If enabled, a banner will appear when the RDP session is connected (may cause high CPU usage, disable if you notice performance issues)
+                        </p>
+                    </div>
+                    <div class="flex flex-row gap-2 justify-center items-center">
+                        <x-switch
+                            :toggled="wbConfig.config.rdpMonitoringEnabled"
+                            @toggle="(_: any) => wbConfig.config.rdpMonitoringEnabled = !wbConfig.config.rdpMonitoringEnabled"
+                            size="large"
+                        ></x-switch>
+                    </div>
+                </x-card>
             </div>
         </div>
 
         <div>
             <x-label class="mb-4 text-neutral-300">WinBoat</x-label>
 
-            <div class="flex flex-col gap-4">
-                <!-- Experimental Features -->
-                <ConfigCard
-                    icon="streamline-ultimate:lab-tube-experiment"
-                    title="Experimental Features"
-                    desc="If enabled, you'll have access to experimental features that may not be stable or complete"
-                    type="switch"
-                    v-model:value="wbConfig.config.experimentalFeatures"
-                    @toggle="toggleExperimentalFeatures"
-                />
-
-                <!-- Advanced Settings -->
-                <ConfigCard
-                    icon="mdi:administrator"
-                    title="Advanced Settings"
-                    desc="If enabled, you'll have access to advanced settings that may prevent WinBoat from working if misconfigured"
-                    type="switch"
-                    v-model:value="wbConfig.config.advancedFeatures"
-                />
-
-                <!-- Disable Animations -->
-                <ConfigCard
-                    icon="mdi:animation-outline"
-                    title="Disable Animations"
-                    desc="If enabled, all animations in the UI will be disabled (useful when GPU acceleration isn't working well)"
-                    type="switch"
-                    v-model:value="wbConfig.config.disableAnimations"
-                />
-            </div>
+            <!-- Experimental Features -->
+            <x-card
+                class="flex items-center p-2 flex-row justify-between w-full py-3 my-0 bg-neutral-800/20 backdrop-brightness-150 backdrop-blur-xl">
+                <div>
+                    <div class="flex flex-row items-center gap-2 mb-2">
+                        <Icon class="text-violet-400 inline-flex size-8" icon="streamline-ultimate:lab-tube-experiment"></Icon>
+                        <h1 class="text-lg my-0 font-semibold">
+                            Experimental Features
+                        </h1>
+                    </div>
+                    <p class="text-neutral-400 text-[0.9rem] !pt-0 !mt-0">
+                        If enabled, you'll have access to experimental features that may not be stable or complete
+                    </p>
+                </div>
+                <div class="flex flex-row justify-center items-center gap-2">
+                    <x-switch
+                        :toggled="wbConfig.config.experimentalFeatures"
+                        @toggle="toggleExperimentalFeatures"
+                        size="large"
+                    ></x-switch>
+                </div>
+            </x-card>
         </div>
 
         <div>
             <x-label class="mb-4 text-neutral-300">Danger Zone</x-label>
             <x-card class="flex flex-col py-3 my-0 mb-6 w-full backdrop-blur-xl backdrop-brightness-150 bg-red-500/10">
                 <h1 class="my-0 text-lg font-normal text-red-300">
-                    ⚠️ <span class="font-bold">WARNING:</span> All actions here are potentially destructive, proceed at
-                    your own caution!
+                    ⚠️ <span class="font-bold">WARNING:</span> All actions here are potentially destructive, proceed at your own caution!
                 </h1>
             </x-card>
-            <div></div>
+            <div>
+
+            </div>
             <x-button
                 class="!bg-red-800/20 px-4 py-1 !border-red-500/10 generic-hover flex flex-row items-center gap-2 !text-red-300"
                 @click="resetWinboat()"
@@ -455,41 +533,48 @@
 </template>
 
 <script setup lang="ts">
-import ConfigCard from "../components/ConfigCard.vue";
-import { computed, onMounted, ref, watch, reactive } from "vue";
-import { computedAsync } from "@vueuse/core";
-import { Winboat } from "../lib/winboat";
-import { ContainerRuntimes, ContainerStatus } from "../lib/containers/common";
-import type { ComposeConfig } from "../../types";
-import { getSpecs } from "../lib/specs";
-import { Icon } from "@iconify/vue";
-import { MultiMonitorMode, RdpArg, WinboatConfig } from "../lib/config";
-import { USBManager, type PTSerializableDeviceInfo } from "../lib/usbmanager";
+import { computed, onMounted, ref } from 'vue';
+import { ContainerStatus, Winboat } from '../lib/winboat';
+import type { ComposeConfig } from '../../types';
+import { getSpecs } from '../lib/specs';
+import { Icon } from '@iconify/vue';
+import { WinboatConfig } from '../lib/config';
+import { USBManager, type PTSerializableDeviceInfo } from '../lib/usbmanager';
+import { DesktopLauncherManager } from '../lib/launcher';
 import { type Device } from "usb";
 import {
+    PORT_MAX,
     USB_VID_BLACKLIST,
     RESTART_ON_FAILURE,
     RESTART_NO,
     GUEST_RDP_PORT,
-    GUEST_QMP_PORT,
-} from "../lib/constants";
-import { ComposePortEntry, ComposePortMapper, Range } from "../utils/port";
-const { app }: typeof import("@electron/remote") = require("@electron/remote");
-const electron: typeof import("electron") = require("electron").remote || require("@electron/remote");
-const os: typeof import("os") = require("node:os");
+    DEFAULT_HOST_QMP_PORT
+} from '../lib/constants';
+import { PortManager } from '../utils/port';
+const { app }: typeof import('@electron/remote') = require('@electron/remote');
+
+// Emits
+const $emit = defineEmits(["rerender"]);
+
+const winboat = new Winboat();
+const usbManager = new USBManager();
+
+// Constants
+const HOMEFOLDER_SHARE_STR = "${HOME}:/shared";
+const USB_BUS_PATH = "/dev/bus/usb:/dev/bus/usb";
+const QMP_ARGUMENT = "-qmp tcp:0.0.0.0:7149,server,wait=off"; // 7149 can remain hardcoded as it refers to a guest port
+const GUEST_QMP_PORT = "7149";
 
 // For Resources
 const compose = ref<ComposeConfig | null>(null);
 const numCores = ref(0);
 const origNumCores = ref(0);
 const maxNumCores = ref(0);
-const ramGB = ref(0);
+const ramGB = ref(0); 
 const origRamGB = ref(0);
 const maxRamGB = ref(0);
-const shareFolder = ref(false);
-const origShareFolder = ref(false);
-const sharedFolderPath = ref("");
-const origSharedFolderPath = ref("");
+const origShareHomeFolder = ref(false);
+const shareHomeFolder = ref(false);
 const origAutoStartContainer = ref(false);
 const autoStartContainer = ref(false);
 const freerdpPort = ref(0);
@@ -498,61 +583,68 @@ const isApplyingChanges = ref(false);
 const resetQuestionCounter = ref(0);
 const isResettingWinboat = ref(false);
 const isUpdatingUSBPrerequisites = ref(false);
+const origApplicationScale = ref(0);
 
 // For USB Devices
 const availableDevices = ref<Device[]>([]);
+const rerenderExperimental = ref(0);
+// ^ This ref is needed because reactivity fails on wbConfig. 
+//   We manually increment this value in toggleExperimentalFeatures() to force rerender.
 
 // For handling the QMP port, as we can't rely on the winboat instance doing this for us.
 // A great example is when the container is offline. In that case, winboat's portManager isn't instantiated.
-let portMapper = ref<ComposePortMapper | null>(null);
+let qmpPortManager = ref<PortManager | null>(null);
 // ^ Has to be reactive for usbPassthroughDisabled computed to trigger.
 
 // For General
-const wbConfig = reactive(WinboatConfig.getInstance());
-const winboat = Winboat.getInstance();
-const usbManager = USBManager.getInstance();
-
-// Constants
-const USB_BUS_PATH = "/dev/bus/usb:/dev/bus/usb";
-const QMP_ARGUMENT = "-qmp tcp:0.0.0.0:7149,server,wait=off"; // 7149 can remain hardcoded as it refers to a guest port
+const wbConfig = new WinboatConfig();
 
 onMounted(async () => {
     await assignValues();
 });
 
+function ensureNumericInput(e: any) {
+    if (e.metaKey || e.ctrlKey || e.which <= 0 || e.which === 8 || e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        return;
+    }
+    
+    if (!/[0-9]/.test(e.key)) {
+        e.preventDefault();
+    }
+}
+
+function updateApplicationScale(value: string | number) {
+    let val = typeof value === 'string' ? parseInt(value) : value;
+    const clamped = typeof val !== 'number' || isNaN(val) ? 100 : Math.min(Math.max(100, val), 500);
+    wbConfig.config.scaleDesktop = clamped;
+    origApplicationScale.value = clamped;
+}
+
 /**
- * Assigns the initial values from the Compose file to the reactive refs
+ * Assigns the initial values from the Docker Compose file to the reactive refs
  * so we can display them and track when a change has been made
  */
 async function assignValues() {
-    compose.value = Winboat.readCompose(winboat.containerMgr!.composeFilePath);
-    portMapper.value = new ComposePortMapper(compose.value);
+    compose.value = winboat.parseCompose();
+    qmpPortManager.value = await PortManager.parseCompose(compose.value);
 
     numCores.value = Number(compose.value.services.windows.environment.CPU_CORES);
     origNumCores.value = numCores.value;
 
+
     ramGB.value = Number(compose.value.services.windows.environment.RAM_SIZE.split("G")[0]);
     origRamGB.value = ramGB.value;
 
-    // Find any volume that ends with /shared
-    const sharedVolume = compose.value.services.windows.volumes.find(v => v.includes("/shared"));
-    if (sharedVolume) {
-        shareFolder.value = true;
-        // Extract the path before :/shared
-        const [hostPath] = sharedVolume.split(":");
-        sharedFolderPath.value = hostPath.replace("${HOME}", os.homedir());
-    } else {
-        shareFolder.value = false;
-        sharedFolderPath.value = "";
-    }
-    origShareFolder.value = shareFolder.value;
-    origSharedFolderPath.value = sharedFolderPath.value;
+    shareHomeFolder.value = compose.value.services.windows.volumes.includes(HOMEFOLDER_SHARE_STR);
+    origShareHomeFolder.value = shareHomeFolder.value;
 
     autoStartContainer.value = compose.value.services.windows.restart === RESTART_ON_FAILURE;
     origAutoStartContainer.value = autoStartContainer.value;
 
-    freerdpPort.value = (portMapper.value.getShortPortMapping(GUEST_RDP_PORT)?.host as number) ?? GUEST_RDP_PORT;
+    freerdpPort.value = qmpPortManager.value.getHostPort(GUEST_RDP_PORT);
     origFreerdpPort.value = freerdpPort.value;
+
+    origApplicationScale.value = wbConfig.config.scaleDesktop;
 
     const specs = await getSpecs();
     maxRamGB.value = specs.ramGB;
@@ -562,46 +654,31 @@ async function assignValues() {
 }
 
 /**
- * Saves the currently specified values to the Compose file
+ * Saves the currently specified values to the Docker Compose file
  * and then re-assigns the initial values to the reactive refs
  */
-async function saveCompose() {
+async function saveDockerCompose() {
     compose.value!.services.windows.environment.RAM_SIZE = `${ramGB.value}G`;
     compose.value!.services.windows.environment.CPU_CORES = `${numCores.value}`;
 
-    // Remove any existing shared volume
-    const existingSharedVolume = compose.value!.services.windows.volumes.find(v => v.includes("/shared"));
-    if (existingSharedVolume) {
-        compose.value!.services.windows.volumes = compose.value!.services.windows.volumes.filter(
-            v => !v.includes("/shared"),
-        );
-    }
+    const composeHasHomefolderShare = compose.value!.services.windows.volumes.includes(HOMEFOLDER_SHARE_STR);
 
-    // Add the new shared volume if enabled
-    if (shareFolder.value && sharedFolderPath.value) {
-        const volumeStr = `${sharedFolderPath.value}:/shared`;
-        compose.value!.services.windows.volumes.push(volumeStr);
+    if (shareHomeFolder.value && !composeHasHomefolderShare) {
+        compose.value!.services.windows.volumes.push(HOMEFOLDER_SHARE_STR);
+    } else if (!shareHomeFolder.value && composeHasHomefolderShare) {
+        compose.value!.services.windows.volumes = compose.value!.services.windows.volumes.filter(v => v !== HOMEFOLDER_SHARE_STR);
     }
 
     compose.value!.services.windows.restart = autoStartContainer.value ? RESTART_ON_FAILURE : RESTART_NO;
 
-    portMapper.value!.setShortPortMapping(GUEST_RDP_PORT, freerdpPort.value, {
-        protocol: "tcp",
-        hostIP: "127.0.0.1",
-    });
-
-    portMapper.value!.setShortPortMapping(GUEST_RDP_PORT, freerdpPort.value, {
-        protocol: "udp",
-        hostIP: "127.0.0.1",
-    });
-
-    compose.value!.services.windows.ports = portMapper.value!.composeFormat;
+    qmpPortManager.value!.setPortMapping(GUEST_RDP_PORT, freerdpPort.value);
+    compose.value!.services.windows.ports = qmpPortManager.value!.composeFormat;
 
     isApplyingChanges.value = true;
     try {
         await winboat.replaceCompose(compose.value!);
         await assignValues();
-    } catch (e) {
+    } catch(e) {
         console.error("Failed to apply changes");
         console.error(e);
     } finally {
@@ -610,127 +687,90 @@ async function saveCompose() {
 }
 
 /**
- * Opens a dialog to select a folder to share with Windows
- */
-function selectSharedFolder() {
-    electron.dialog
-        .showOpenDialog({
-            title: "Select Folder to Share",
-            properties: ["openDirectory"],
-            defaultPath: sharedFolderPath.value || os.homedir(),
-        })
-        .then(result => {
-            if (!result.canceled && result.filePaths.length > 0) {
-                sharedFolderPath.value = result.filePaths[0];
-            }
-        });
-}
-
-/**
  * Adds the required fields for USB passthrough to work
- * to the Compose file if they don't already exist
+ * to the Docker Compose file if they don't already exist
  */
 async function addRequiredComposeFieldsUSB() {
     if (!usbPassthroughDisabled.value) {
         return;
     }
-
+    
     isUpdatingUSBPrerequisites.value = true;
     await winboat.stopContainer();
 
-    if (!hasUsbVolume(compose)) {
+    if(!hasUsbVolume(compose)) {
         compose.value!.services.windows.volumes.push(USB_BUS_PATH);
     }
-    if (!hasQmpPort()) {
-        const composePorts = winboat.containerMgr!.defaultCompose.services.windows.ports;
-        const portEntries = composePorts.filter(x => typeof x === "string").map(x => new ComposePortEntry(x));
-        const QMPPredicate = (entry: ComposePortEntry) =>
-            (entry.host instanceof Range || Number.isNaN(entry.host)) && // We allow NaN in case the QMP port entry isn't already there on podman for whatever reason
-            typeof entry.container === "number" &&
-            entry.container === GUEST_QMP_PORT;
-        const QMPPort = portEntries.find(QMPPredicate)!.host;
-
-        portMapper.value!.setShortPortMapping(GUEST_QMP_PORT, QMPPort, {
-            protocol: "tcp",
-            hostIP: "127.0.0.1",
-        });
+    if(!hasQmpPort()) {
+        await qmpPortManager.value!.setPortMapping(GUEST_QMP_PORT, DEFAULT_HOST_QMP_PORT);
     }
 
-    if (!compose.value!.services.windows.environment.ARGUMENTS) {
+    if(!compose.value!.services.windows.environment.ARGUMENTS) {
         compose.value!.services.windows.environment.ARGUMENTS = "";
     }
-    if (!hasQmpArgument(compose)) {
+    if(!hasQmpArgument(compose)) {
         compose.value!.services.windows.environment.ARGUMENTS += `\n${QMP_ARGUMENT}`;
     }
 
-    if (!compose.value!.services.windows.environment.HOST_PORTS) {
+    if(!compose.value!.services.windows.environment.HOST_PORTS) {
         compose.value!.services.windows.environment.HOST_PORTS = "";
     }
-    if (!hasHostPort(compose)) {
-        const delimiter = compose.value!.services.windows.environment.HOST_PORTS.length == 0 ? "" : ",";
-        compose.value!.services.windows.environment.HOST_PORTS += delimiter + GUEST_QMP_PORT;
+    if(!hasHostPort(compose)) {
+        const delimeter = compose.value!.services.windows.environment.HOST_PORTS.length == 0 ? '' : ',';
+        compose.value!.services.windows.environment.HOST_PORTS += delimeter + GUEST_QMP_PORT;
     }
-
-    await saveCompose();
+    
+    await saveDockerCompose();
 
     isUpdatingUSBPrerequisites.value = false;
 }
 
-const errors = computedAsync(async () => {
+const errors = computed(() => {
     let errCollection: string[] = [];
 
     if (!numCores.value || numCores.value < 2) {
-        errCollection.push("You must allocate at least two CPU cores for Windows to run properly");
+        errCollection.push("You must allocate at least two CPU cores for Windows to run properly")
     }
 
     if (numCores.value > maxNumCores.value) {
-        errCollection.push("You cannot allocate more CPU cores to Windows than you have available");
+        errCollection.push("You cannot allocate more CPU cores to Windows than you have available")
     }
 
     if (!ramGB.value || ramGB.value < 4) {
-        errCollection.push("You must allocate at least 4 GB of RAM for Windows to run properly");
+        errCollection.push("You must allocate at least 4 GB of RAM for Windows to run properly")
     }
 
     if (ramGB.value > maxRamGB.value) {
-        errCollection.push("You cannot allocate more RAM to Windows than you have available");
-    }
-
-    if (
-        freerdpPort.value !== origFreerdpPort.value &&
-        !Number.isNaN(freerdpPort.value) &&
-        !(await ComposePortMapper.isPortOpen(freerdpPort.value))
-    ) {
-        errCollection.push("You must choose an open port for your FreeRDP port!");
+        errCollection.push("You cannot allocate more RAM to Windows than you have available")
     }
 
     return errCollection;
-});
+})
 
-const hasUsbVolume = (_compose: typeof compose) =>
-    _compose.value?.services.windows.volumes?.some(x => x.includes(USB_BUS_PATH));
-const hasQmpArgument = (_compose: typeof compose) =>
-    _compose.value?.services.windows.environment.ARGUMENTS?.includes(QMP_ARGUMENT);
-const hasQmpPort = () => portMapper.value!.hasShortPortMapping(GUEST_QMP_PORT) ?? false;
-const hasHostPort = (_compose: typeof compose) =>
-    _compose.value?.services.windows.environment.HOST_PORTS?.includes(GUEST_QMP_PORT.toString());
+const hasUsbVolume = (_compose: typeof compose) => _compose.value?.services.windows.volumes?.includes(USB_BUS_PATH);
+const hasQmpArgument = (_compose: typeof compose) => _compose.value?.services.windows.environment.ARGUMENTS?.includes(QMP_ARGUMENT);
+const hasQmpPort = () => qmpPortManager.value?.hasPortMapping(GUEST_QMP_PORT) ?? false;
+const hasHostPort = (_compose: typeof compose) => _compose.value?.services.windows.environment.HOST_PORTS?.includes(GUEST_QMP_PORT);
 
 const usbPassthroughDisabled = computed(() => {
     return !hasUsbVolume(compose) || !hasQmpArgument(compose) || !hasQmpPort() || !hasHostPort(compose);
-});
+})
 
 const saveButtonDisabled = computed(() => {
-    const hasResourceChanges =
-        origNumCores.value !== numCores.value ||
-        origRamGB.value !== ramGB.value ||
-        shareFolder.value !== origShareFolder.value ||
-        sharedFolderPath.value !== origSharedFolderPath.value ||
-        (!Number.isNaN(freerdpPort.value) && freerdpPort.value !== origFreerdpPort.value) ||
+    const hasResourceChanges = 
+        origNumCores.value !== numCores.value || 
+        origRamGB.value !== ramGB.value || 
+        shareHomeFolder.value !== origShareHomeFolder.value || 
+        freerdpPort.value !== origFreerdpPort.value ||
         autoStartContainer.value !== origAutoStartContainer.value;
 
-    const shouldBeDisabled = errors.value?.length || !hasResourceChanges || isApplyingChanges.value;
-
+    const shouldBeDisabled = 
+        errors.value.length || 
+        !hasResourceChanges || 
+        isApplyingChanges.value;
+        
     return shouldBeDisabled;
-});
+})
 
 async function resetWinboat() {
     if (++resetQuestionCounter.value < 3) {
@@ -746,12 +786,10 @@ async function resetWinboat() {
 // refresh via the button
 function refreshAvailableDevices() {
     availableDevices.value = usbManager.devices.value.filter(device => {
-        return (
-            !usbManager.isDeviceInPassthroughList(device) &&
-            !USB_VID_BLACKLIST.some(x => usbManager.stringifyDevice(device).includes(x))
-        );
+        return !usbManager.isDeviceInPassthroughList(device) &&
+            !USB_VID_BLACKLIST.some(x => usbManager.stringifyDevice(device).includes(x));
     });
-    console.info("[Available Devices] Debug", availableDevices.value);
+    console.info('[Available Devices] Debug', availableDevices.value);
 }
 
 function addDevice(device: Device): void {
@@ -759,7 +797,7 @@ function addDevice(device: Device): void {
         usbManager.addDeviceToPassthroughList(device);
         refreshAvailableDevices();
     } catch (error) {
-        console.error("Failed to add device to passthrough list:", error);
+        console.error('Failed to add device to passthrough list:', error);
     }
 }
 
@@ -768,59 +806,103 @@ function removeDevice(ptDevice: PTSerializableDeviceInfo): void {
         usbManager.removeDeviceFromPassthroughList(ptDevice);
         refreshAvailableDevices();
     } catch (error) {
-        console.error("Failed to remove device from passthrough list:", error);
+        console.error('Failed to remove device from passthrough list:', error);
     }
 }
 
 async function toggleExperimentalFeatures() {
+    wbConfig.config.experimentalFeatures = !wbConfig.config.experimentalFeatures;
+    rerenderExperimental.value++;
+    $emit("rerender");
+
     // Remove all passthrough USB devices if we're disabling experimental features
     // since USB passthrough is an experimental feature
     if (!wbConfig.config.experimentalFeatures) {
         await usbManager.removeAllPassthroughDevicesAndConfig();
-
-        // Create the QMP interval if experimental features are enabled
-        // This would get created by default since we're changing the compose and re-deploying,
-        // but a scenario could also occur where the user is re-enabling experimental features
-        // after the compose changes, which then would cause a bug
-        // TODO: Remove after USB passthrough is no longer experimental
-    } else if (winboat.containerStatus.value == ContainerStatus.RUNNING && !winboat.hasQMPInterval) {
+    // Create the QMP interval if experimental features are enabled
+    // This would get created by default since we're changing the compose and re-deploying,
+    // but a scenario could also occur where the user is re-enabling experimental features
+    // after the compose changes, which then would cause a bug
+    // TODO: Remove after USB passthrough is no longer experimental
+    } else if (winboat.containerStatus.value == ContainerStatus.Running && !winboat.hasQMPInterval) {
         console.log("Creating QMP interval because experimental features were turned on");
         winboat.createQMPInterval();
     }
 }
 
-// Watch for when shared folder is enabled and set default path
-watch(shareFolder, (newValue) => {
-    if (newValue && !sharedFolderPath.value) {
-        sharedFolderPath.value = os.homedir();
+/**
+ * Toggle Desktop Launcher Creator feature
+ * Automatically cleans up all shortcuts when turning off
+ */
+async function toggleDesktopLauncher() {
+    // If turning OFF, automatically cleanup all launchers
+    if (wbConfig.config.desktopLauncherEnabled) {
+        const launcherMgr = new DesktopLauncherManager(winboat);
+        const count = await launcherMgr.removeAllLaunchers();
+        if (count > 0) {
+            alert(`✅ Removed ${count} app shortcut(s)`);
+        }
     }
-});
+    
+    // Toggle the setting
+    wbConfig.config.desktopLauncherEnabled = !wbConfig.config.desktopLauncherEnabled;
+}
+
+/**
+ * Toggles "Open with WinBoat" feature
+ */
+async function toggleOpenWith() {
+    // Check if shared home folder is enabled
+    if (!shareHomeFolder.value) {
+        console.warn('[OpenWith] Shared Home Folder must be enabled first');
+        return;
+    }
+
+    const { OpenWithManager } = await import('../lib/launcher');
+    const openWithMgr = new OpenWithManager(winboat);
+
+    try {
+        // If turning OFF, remove the files
+        if (wbConfig.config.openWithEnabled) {
+            await openWithMgr.disable();
+            wbConfig.config.openWithEnabled = false;
+        }
+        // If turning ON, create the files
+        else {
+            await openWithMgr.enable();
+            wbConfig.config.openWithEnabled = true;
+        }
+    } catch (error) {
+        console.error('[OpenWith] Toggle failed:', error);
+    }
+}
+
 </script>
 
 <style scoped>
-.devices-move,
+.devices-move, 
 .devices-enter-active,
 .devices-leave-active,
-.menu-move,
+.menu-move, 
 .menu-enter-active,
 .menu-leave-active {
-    transition: all 0.5s ease;
+  transition: all 0.5s ease;
 }
 
 .devices-enter-from,
 .devices-leave-to {
-    opacity: 0;
-    transform: translateX(30px);
+  opacity: 0;
+  transform: translateX(30px);
 }
 
 .devices-leave-active,
 .menu-leave-active {
-    position: absolute;
+  position: absolute;
 }
 
 .menu-enter-from,
 .menu-leave-to {
-    opacity: 0;
-    transform: translateX(20px) scale(0.9);
+  opacity: 0;
+  transform: translateX(20px) scale(0.9);
 }
 </style>

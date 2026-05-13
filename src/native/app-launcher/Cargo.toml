@@ -1,0 +1,23 @@
+[package]
+name = "winboat-launcher"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# HTTP client for checking guest API
+reqwest = { version = "0.12", features = ["blocking", "json"] }
+# JSON parsing
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+# Process execution
+tokio = { version = "1", features = ["full"] }
+# GUI - lightweight native dialogs
+native-dialog = "0.7"
+# Error handling
+anyhow = "1.0"
+
+[profile.release]
+opt-level = "z"     # Optimize for size
+lto = true          # Link-time optimization
+codegen-units = 1   # Better optimization
+strip = true        # Strip symbols
